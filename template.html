@@ -364,6 +364,8 @@ display: none;
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()
 ## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+<pre class="r"><code>library(readxl)
+library(haven)</code></pre>
 <p>Let’s import a dataset.</p>
 <pre class="r"><code>litters_df = 
   read_csv(&quot;data_import_examples/FAS_litters.csv&quot;)</code></pre>
@@ -375,6 +377,7 @@ display: none;
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<p>*read_csv is better thab read.csv.</p>
 <p>Look at your data!!</p>
 <pre class="r"><code>names(litters_df)</code></pre>
 <pre><code>## [1] &quot;Group&quot;             &quot;Litter Number&quot;     &quot;GD0 weight&quot;       
@@ -623,6 +626,29 @@ rows.</p>
   janitor::clean_names(pups_df)</code></pre>
 <p>^I imported the pups dataframe and skipped the first 3 rows, then I
 cleaned the names.</p>
+<p>#Okay what about excel</p>
+<p>csv’s are great, but sometimes you get an excel file.</p>
+<pre class="r"><code>mlb_df = 
+  read_excel(&quot;data_import_examples/mlb11.xlsx&quot;)</code></pre>
+<p>Import LotR word counts.</p>
+<pre class="r"><code>fotr_df = 
+  read_excel(&quot;data_import_examples/LotR_Words.xlsx&quot;, range = &quot;B3:D6&quot;)</code></pre>
+<p>^I imported just a range of data from the excel.</p>
+<p>##SAS??</p>
+<p>Import the PULSE data</p>
+<pre class="r"><code>pulse_df = 
+  read_sas(&quot;data_import_examples/public_pulse_data.sas7bdat&quot;)
+
+pulse_df = 
+  janitor::clean_names(pulse_df)</code></pre>
+<p>##Why do I hate read.csv so much??</p>
+<pre class="r"><code>litters_df_base =
+  read.csv(&quot;data_import_examples/FAS_litters.csv&quot;)</code></pre>
+<p>(EVAL=FALSE means I won’t execute the code in the readme) read_csv
+prints better than read.csv</p>
+<p>##What about data exporting?</p>
+<pre class="r"><code>write_csv(fotr_df, &quot;data_import_examples/fotr_df.csv&quot;)</code></pre>
+<p>You do write_csv(dataset_name, “where you want to save it”)</p>
 
 
 
