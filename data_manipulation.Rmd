@@ -133,8 +133,65 @@ mutate(litters_df,
 ```
 
 
+## `arrange`
 
+`arrange()` arranges things
 
+```{r}
+arrange(litters_df, pups_born_alive) #sorted by low to high # pups born
+arrange(litters_df, group, pups_born_alive) #first sort by ascending group, THEN by pups born alive
+arrange(litters_df, desc(group), pups_born_alive) #sort by DEscending group, then by ascending pups born alive
+
+arrange(litters_df, gd0_weight) #this variable has missing values, NA's go to bottom
+```
+
+## PIPES
+
+Let's see a BAD way to do things
+
+```{r}
+litters_df = 
+  read_csv("data_import_examples/FAS_litters.csv", na = c("NA", ".", ""))
+
+litters_df = 
+  janitor::clean_names(litters_df)
+
+litters_df2 = 
+  select(litters_df, group, litter_number, starts_with("gd"))
+
+litters_df3 = 
+  drop_na(litters_df)
+
+litters_df4 = 
+  mutate(litters_df,
+    wt_gain = gd18_weight - gd0_weight
+  ) #LOOK HOW CLUNKY AND BAD!!!
+```
+
+Use pipes to avoid all this! (**command, shift, m --> gives me pipe operator)
+
+```{r}
+litters_df = 
+  read_csv("data_import_examples/FAS_litters.csv", na = c("NA", ".", "")) |> #whatever comes OUT of this, goes directly in the next line of code!
+  janitor::clean_names() |> 
+  select(group, litter_number, starts_with("gd")) |> 
+  drop_na() |> 
+  mutate(
+    wt_gain = gd18_weight - gd0_weight
+  )
+```
+
+LEARNING ASSESSMENT
+Import and tidy the pups data in a piped chain of commands
+
+```{r}
+pups_df = 
+  read_csv("data_import_examples/FAS_pups.csv", skip = 3, na = c("NA", ".", "")) |>
+  janitor::clean_names() |> #clean_names has to come first here because I am referring to the 'cleaned' names in the later steps
+  filter(sex == 1) |> 
+  select(-pd_ears) |> 
+  mutate(pd_pivot_ge7 = pd_pivot >= 7)
+```
 
 
 
