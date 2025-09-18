@@ -74,6 +74,10 @@ select(litters_df, group) #creates a dataframe with just one variable
 pull(litters_df, group) #creates a vector of just the values of one variable. You'll like...never do this
 ```
 
+LEARNING ASSESSMENT: in the pups data, select the columns containing litter number, sex and PD ears
+```{r}
+select(pups_df, litter_number, sex, pd_ears)
+```
 
 
 

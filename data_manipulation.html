@@ -575,6 +575,23 @@ pups_df =
 ## [21] &quot;Mod7&quot; &quot;Mod7&quot; &quot;Mod7&quot; &quot;Mod7&quot; &quot;Mod7&quot; &quot;Mod7&quot; &quot;Mod7&quot; &quot;Low7&quot; &quot;Low7&quot; &quot;Low7&quot;
 ## [31] &quot;Low7&quot; &quot;Low7&quot; &quot;Low7&quot; &quot;Low7&quot; &quot;Low7&quot; &quot;Mod8&quot; &quot;Mod8&quot; &quot;Mod8&quot; &quot;Mod8&quot; &quot;Mod8&quot;
 ## [41] &quot;Mod8&quot; &quot;Mod8&quot; &quot;Low8&quot; &quot;Low8&quot; &quot;Low8&quot; &quot;Low8&quot; &quot;Low8&quot; &quot;Low8&quot; &quot;Low8&quot;</code></pre>
+<p>LEARNING ASSESSMENT: in the pups data, select the columns containing
+litter number, sex and PD ears</p>
+<pre class="r"><code>select(pups_df, litter_number, sex, pd_ears)</code></pre>
+<pre><code>## # A tibble: 313 × 3
+##    litter_number   sex pd_ears
+##    &lt;chr&gt;         &lt;dbl&gt;   &lt;dbl&gt;
+##  1 #85               1       4
+##  2 #85               1       4
+##  3 #1/2/95/2         1       5
+##  4 #1/2/95/2         1       5
+##  5 #5/5/3/83/3-3     1       5
+##  6 #5/5/3/83/3-3     1       5
+##  7 #5/4/2/95/2       1      NA
+##  8 #4/2/95/3-3       1       4
+##  9 #4/2/95/3-3       1       4
+## 10 #2/2/95/3-2       1       4
+## # ℹ 303 more rows</code></pre>
 
 
 
