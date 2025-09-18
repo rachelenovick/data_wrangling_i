@@ -1,0 +1,89 @@
+---
+title: "Data Import"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+```
+
+Let's import the datasets
+
+```{r}
+litters_df = 
+  read_csv("data_import_examples/FAS_litters.csv", na = c("NA", ".", ""))
+litters_df = 
+  janitor::clean_names(litters_df)
+
+pups_df = 
+  read_csv("data_import_examples/FAS_pups.csv", skip = 3, na = c("NA", ".", ""))
+pups_df = 
+  janitor::clean_names(pups_df)
+```
+
+##`select`
+
+`select` selects variables from my dataframe.
+
+select specific variables
+
+```{r}
+select(litters_df, group, litter_number, gd0_weight)
+```
+
+select a range
+
+```{r}
+select(litters_df, group:gd_of_birth) #this keeps all the variables between group and gd_of_birth
+```
+
+select by removal
+
+```{r}
+select(litters_df, -group) #this keeps everything BUT group
+select(litters_df, -(group:gd_of_birth))
+```
+
+select by prefix
+
+```{r}
+select(litters_df, group, starts_with("gd")) #keeps everything that starts with "gd" (there is also an "ends_with" or "contains")
+```
+
+rearrange by selecting
+
+```{r}
+select(litters_df, starts_with("gd"), group) #everything that starts with "gd" will appear first before group
+select(litters_df, litter_number, everything()) #puts litter_number first, but keeps all your variables
+
+relocate(litters_df, litter_number) #does the same thing, puts litter_number first (just another option)
+```
+
+rename by selecting
+
+```{r}
+select(litters_df, GROUP = group, everything()) #just renamed that variable group, but kept everything
+rename(litters_df, GROUP = group) #does the same thing, just another method
+```
+
+what if I only select one variable?
+
+```{r}
+select(litters_df, group) #creates a dataframe with just one variable
+
+pull(litters_df, group) #creates a vector of just the values of one variable. You'll like...never do this
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
