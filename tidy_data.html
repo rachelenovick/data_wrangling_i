@@ -394,7 +394,7 @@ display: none;
 </div>
 <div id="pivot-wider" class="section level2">
 <h2>Pivot Wider</h2>
-<p>Sometimes you have long daa you want to make wider.</p>
+<p>Sometimes you have long data you want to make wider.</p>
 <p>Let’s make up an analysis results table.</p>
 <pre class="r"><code>analysis_df = 
   tibble(group = c(&quot;treatment&quot;, &quot;treatment&quot;, &quot;control&quot;, &quot;control&quot;),
@@ -405,12 +405,99 @@ display: none;
   pivot_wider(
     names_from = time,
     values_from = mean
+  ) |&gt; 
+  knitr::kable() #put into nicer table format for your markdown file</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">group</th>
+<th align="right">pre</th>
+<th align="right">post</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">treatment</td>
+<td align="right">4.0</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="left">control</td>
+<td align="right">4.2</td>
+<td align="right">5</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="bind-tables" class="section level2">
+<h2>Bind tables</h2>
+<pre class="r"><code>#you have multiple tables of a similar structure and you want to stack them together
+
+fellowship_ring = 
+  read_excel(&quot;data_import_examples/LotR_Words.xlsx&quot;, range = &quot;B3:D6&quot;) |&gt; 
+  mutate(movie = &quot;fellowship_ring&quot;)
+
+two_towers = 
+  read_excel(&quot;data_import_examples/LotR_Words.xlsx&quot;, range = &quot;F3:H6&quot;) |&gt; 
+  mutate(movie = &quot;two_towers&quot;)
+
+return_king = 
+  read_excel(&quot;data_import_examples/LotR_Words.xlsx&quot;, range = &quot;J3:L6&quot;) |&gt; 
+  mutate(movie = &quot;return_king&quot;)
+
+#these all have the same variables, let&#39;s stack on top of each other
+
+lotr_df = 
+  bind_rows(fellowship_ring, two_towers, return_king) |&gt; 
+  janitor::clean_names() |&gt; 
+  pivot_longer(
+    cols = female:male,
+    names_to = &quot;sex&quot;,
+    values_to = &quot;words&quot;
+  ) |&gt; 
+  relocate(movie) |&gt; 
+  mutate(race = str_to_lower(race))
+
+#but you have columns for male and female when you should have a gender variable with male/female values</code></pre>
+<p>##Join FAS datasets</p>
+<p>Import the <code>litters</code> dataset.</p>
+<pre class="r"><code>litters_df = 
+  read_csv(&quot;data_import_examples/FAS_litters.csv&quot;, na = c(&quot;NA&quot;, &quot;.&quot;, &quot;&quot;)) |&gt; 
+  janitor::clean_names() |&gt; 
+  mutate(wt_gain = gd18_weight - gd0_weight) |&gt; 
+  separate( #tell R variable you want to split up, and what you want it to split into
+    group, into = c(&quot;dose&quot;, &quot;day_of_treatment&quot;), sep = 3 #split after the 3rd character (or you could say split        after a comma)
   )</code></pre>
-<pre><code>## # A tibble: 2 × 3
-##   group       pre  post
-##   &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;
-## 1 treatment   4      10
-## 2 control     4.2     5</code></pre>
+<pre><code>## Rows: 49 Columns: 8
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr (2): Group, Litter Number
+## dbl (6): GD0 weight, GD18 weight, GD of Birth, Pups born alive, Pups dead @ ...
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<p>Import <code>pup</code> next!</p>
+<pre class="r"><code>pups_df = 
+  read_csv(&quot;data_import_examples/FAS_pups.csv&quot;, skip = 3, na = c(&quot;NA&quot;, &quot;.&quot;, &quot;&quot;)) |&gt; 
+  janitor::clean_names() |&gt; 
+  mutate(sex = case_match(
+    sex, #tell whcih variable to look at
+    1 ~ &quot;male&quot;,
+    2 ~ &quot;female&quot;
+  )
+  )</code></pre>
+<pre><code>## Rows: 313 Columns: 6
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr (1): Litter Number
+## dbl (5): Sex, PD ears, PD eyes, PD pivot, PD walk
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<p>Join the datasets!</p>
+<pre class="r"><code>fas_df = 
+  left_join(pups_df, litters_df, by = &quot;litter_number&quot;) |&gt; #prioritize pups_df. add to it info from litter. lose things from litter that don&#39;t match up with something from pups
+  relocate(litter_number, dose, day_of_treatment)</code></pre>
 </div>
 
 

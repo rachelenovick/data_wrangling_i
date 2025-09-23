@@ -50,7 +50,7 @@ litters_df =
 
 ## Pivot Wider
 
-Sometimes you have long daa you want to make wider.
+Sometimes you have long data you want to make wider.
 
 Let's make up an analysis results table.
 
@@ -72,7 +72,82 @@ analysis_df |>
   pivot_wider(
     names_from = time,
     values_from = mean
+  ) |> 
+  knitr::kable() #put into nicer table format for your markdown file
+```
+
+## Bind tables
+
+```{r}
+#you have multiple tables of a similar structure and you want to stack them together
+
+fellowship_ring = 
+  read_excel("data_import_examples/LotR_Words.xlsx", range = "B3:D6") |> 
+  mutate(movie = "fellowship_ring")
+
+two_towers = 
+  read_excel("data_import_examples/LotR_Words.xlsx", range = "F3:H6") |> 
+  mutate(movie = "two_towers")
+
+return_king = 
+  read_excel("data_import_examples/LotR_Words.xlsx", range = "J3:L6") |> 
+  mutate(movie = "return_king")
+
+#these all have the same variables, let's stack on top of each other
+
+lotr_df = 
+  bind_rows(fellowship_ring, two_towers, return_king) |> 
+  janitor::clean_names() |> 
+  pivot_longer(
+    cols = female:male,
+    names_to = "sex",
+    values_to = "words"
+  ) |> 
+  relocate(movie) |> 
+  mutate(race = str_to_lower(race))
+
+#but you have columns for male and female when you should have a gender variable with male/female values
+
+
+```
+
+##Join FAS datasets
+
+Import the `litters` dataset.
+
+```{r}
+litters_df = 
+  read_csv("data_import_examples/FAS_litters.csv", na = c("NA", ".", "")) |> 
+  janitor::clean_names() |> 
+  mutate(wt_gain = gd18_weight - gd0_weight) |> 
+  separate( #tell R variable you want to split up, and what you want it to split into
+    group, into = c("dose", "day_of_treatment"), sep = 3 #split after the 3rd character (or you could say split        after a comma)
   )
+  
+```
+
+Import `pup` next!
+
+```{r}
+pups_df = 
+  read_csv("data_import_examples/FAS_pups.csv", skip = 3, na = c("NA", ".", "")) |> 
+  janitor::clean_names() |> 
+  mutate(sex = case_match(
+    sex, #tell whcih variable to look at
+    1 ~ "male",
+    2 ~ "female"
+  )
+  )
+```
+
+Join the datasets!
+
+```{r}
+
+fas_df = 
+  left_join(pups_df, litters_df, by = "litter_number") |> #prioritize pups_df. add to it info from litter. lose things from litter that don't match up with something from pups
+  relocate(litter_number, dose, day_of_treatment)
+  
 ```
 
 
