@@ -20,15 +20,33 @@ pulse_df =
     read_sas("data_import_examples/public_pulse_data.sas7bdat") |> 
     janitor::clean_names() |> 
     pivot_longer(
-      cols = bdi_score_bl:bdi_score_12m,
+      cols = bdi_score_bl:bdi_score_12m, #identify columns that are long (have more than one piece of info)
       names_to = "visit",
       values_to = "bdi_score",
       names_prefix = "bdi_score_" #gets rid of prefix in name of variable
     ) |> 
-  mutate(visit = replace(visit, visit =="bl", "00m"))
+  mutate(visit = replace(visit, visit =="bl", "00m")) |> 
+  relocate(id, visit) #put ID before visit as first two variables
       
 ```
 
+Do one more example.
+
+```{r}
+litters_df = 
+  read_csv("data_import_examples/FAS_litters.csv", na = c("NA", ".", "")) |> 
+  janitor::clean_names() |> 
+  pivot_longer(
+    cols = gd0_weight:gd18_weight,
+    names_to = "gd_time",
+    values_to = "weight"
+  ) |> 
+  mutate(gd_time = case_match(
+    gd_time,
+    "gd0_weight" ~ 0,
+    "gd18_weight" ~ 18
+  )) #tell R a list of variables - tell what new name you want to give old variable
+```
 
 
 

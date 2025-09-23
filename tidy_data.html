@@ -362,12 +362,35 @@ display: none;
     read_sas(&quot;data_import_examples/public_pulse_data.sas7bdat&quot;) |&gt; 
     janitor::clean_names() |&gt; 
     pivot_longer(
-      cols = bdi_score_bl:bdi_score_12m,
+      cols = bdi_score_bl:bdi_score_12m, #identify columns that are long (have more than one piece of info)
       names_to = &quot;visit&quot;,
       values_to = &quot;bdi_score&quot;,
       names_prefix = &quot;bdi_score_&quot; #gets rid of prefix in name of variable
     ) |&gt; 
-  mutate(visit = replace(visit, visit ==&quot;bl&quot;, &quot;00m&quot;))</code></pre>
+  mutate(visit = replace(visit, visit ==&quot;bl&quot;, &quot;00m&quot;)) |&gt; 
+  relocate(id, visit) #put ID before visit as first two variables</code></pre>
+<p>Do one more example.</p>
+<pre class="r"><code>litters_df = 
+  read_csv(&quot;data_import_examples/FAS_litters.csv&quot;, na = c(&quot;NA&quot;, &quot;.&quot;, &quot;&quot;)) |&gt; 
+  janitor::clean_names() |&gt; 
+  pivot_longer(
+    cols = gd0_weight:gd18_weight,
+    names_to = &quot;gd_time&quot;,
+    values_to = &quot;weight&quot;
+  ) |&gt; 
+  mutate(gd_time = case_match(
+    gd_time,
+    &quot;gd0_weight&quot; ~ 0,
+    &quot;gd18_weight&quot; ~ 18
+  )) #tell R a list of variables - tell what new name you want to give old variable</code></pre>
+<pre><code>## Rows: 49 Columns: 8
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr (2): Group, Litter Number
+## dbl (6): GD0 weight, GD18 weight, GD of Birth, Pups born alive, Pups dead @ ...
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 </div>
 
 
