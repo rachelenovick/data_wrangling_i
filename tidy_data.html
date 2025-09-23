@@ -361,7 +361,7 @@ display: none;
 <pre class="r"><code>pulse_df = 
     read_sas(&quot;data_import_examples/public_pulse_data.sas7bdat&quot;) |&gt; 
     janitor::clean_names() |&gt; 
-    pivot_longer(
+    pivot_longer( #makes wide data longer
       cols = bdi_score_bl:bdi_score_12m, #identify columns that are long (have more than one piece of info)
       names_to = &quot;visit&quot;,
       values_to = &quot;bdi_score&quot;,
@@ -391,6 +391,26 @@ display: none;
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div id="pivot-wider" class="section level2">
+<h2>Pivot Wider</h2>
+<p>Sometimes you have long daa you want to make wider.</p>
+<p>Let’s make up an analysis results table.</p>
+<pre class="r"><code>analysis_df = 
+  tibble(group = c(&quot;treatment&quot;, &quot;treatment&quot;, &quot;control&quot;, &quot;control&quot;),
+         time = c(&quot;pre&quot;, &quot;post&quot;, &quot;pre&quot;, &quot;post&quot;),
+         mean = c(4, 10, 4.2, 5))</code></pre>
+<p>Pivot wider for human readability</p>
+<pre class="r"><code>analysis_df |&gt; 
+  pivot_wider(
+    names_from = time,
+    values_from = mean
+  )</code></pre>
+<pre><code>## # A tibble: 2 × 3
+##   group       pre  post
+##   &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;
+## 1 treatment   4      10
+## 2 control     4.2     5</code></pre>
 </div>
 
 

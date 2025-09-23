@@ -19,7 +19,7 @@ This document will show how to tidy data.
 pulse_df = 
     read_sas("data_import_examples/public_pulse_data.sas7bdat") |> 
     janitor::clean_names() |> 
-    pivot_longer(
+    pivot_longer( #makes wide data longer
       cols = bdi_score_bl:bdi_score_12m, #identify columns that are long (have more than one piece of info)
       names_to = "visit",
       values_to = "bdi_score",
@@ -48,6 +48,32 @@ litters_df =
   )) #tell R a list of variables - tell what new name you want to give old variable
 ```
 
+## Pivot Wider
+
+Sometimes you have long daa you want to make wider.
+
+Let's make up an analysis results table.
+
+```{r}
+
+analysis_df = 
+  tibble(group = c("treatment", "treatment", "control", "control"),
+         time = c("pre", "post", "pre", "post"),
+         mean = c(4, 10, 4.2, 5))
+
+
+```
+
+Pivot wider for human readability
+
+```{r}
+
+analysis_df |> 
+  pivot_wider(
+    names_from = time,
+    values_from = mean
+  )
+```
 
 
 
